@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Aero Glass</title>
+  <style>
+    body { padding: 2rem 0 0 2rem; }
+    .container {
+      width: 50%;
+      height: 128px;
+      background-image: url('./bg.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      box-shadow: 6px 6px 6px rgba(0, 0, 0, .26);
+    }
+    .aero-glass {
+      position: relative;
+      height: 64px;
+    }
+    .aero-glass-blur {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      filter: blur(4px);
+      background-image: url('./bg.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    .aero-glass-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, .26);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="aero-glass">
+      <div class="aero-glass-blur"></div>
+      <div class="aero-glass-mask"></div>
+    </div>
+  </div>
+</body>
+</html>

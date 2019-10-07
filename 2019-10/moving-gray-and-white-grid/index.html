@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Moving gray and white grid</title>
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <style>
+    html { background-color: rgba(213, 213, 213); }
+    body { padding: 2rem 0 0 2rem; }
+    .box { 
+      width: 300px; 
+      height: 300px;
+      border: 1px solid rgba(0, 0, 0, .08);
+      box-shadow: 3px 3px 5px rgba(0, 0, 0, .08);
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgAQMAAABJtOi3AAAABlBMVEX4+Pj///9njiF9AAAAFElEQVQIW2P4/5+BgYGKBIYAZQQA7b0/waIf9f4AAAAASUVORK5CYII=);
+      background-size: auto 12.5%;
+    }
+    .box-animation {
+      animation-name: moving;
+      animation-duration: 3600s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+    .box-animation-paused {
+      animation-play-state: paused;
+    }
+    @keyframes moving {
+      0% {
+        background-position: 72000px 72000px;
+      }
+      100% {
+        background-position: 0 0;
+      }
+    }
+    .box .control {
+      top: 0;
+      left: 0;
+      min-width: 32px;
+      height: 32px;
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="box box-animation">
+    <button class="control">Pause</button>
+  </div>
+  <script>
+    $(document).ready(function () {
+      $('.box .control').click(function () {
+        $('.box').toggleClass('box-animation-paused');
+        $('.box .control').text($('.box .control').text() === 'Pause' ? 'Start' : 'Pause');
+      });
+    });
+  </script>
+</body>
+</html>

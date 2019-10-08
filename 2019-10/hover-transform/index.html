@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Hover Transform</title>
+  <style>
+    body { padding: 2rem 0 0 2rem; }
+    .hover-transform {
+      position: relative;
+      box-shadow: 6px 6px 6px rgba(0, 0, 0, .26);
+      border-radius: 4px;
+      width: 300px;
+      height: 300px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .hover-transform-bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: url('./img.jpg');
+      background-size: cover;
+      border-radius: 4px;
+      transition: transform .4s ease;
+    }
+    .hover-transform-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, .2);
+      border-radius: 4px;
+      transition: background-color .4s ease;
+    }
+    .hover-transform-ctx {
+      position: absolute;
+      color: white;
+      top: 0;
+      left: 0;
+      padding: 0.2rem;
+    }
+    .hover-transform:hover .hover-transform-bg {
+      transform: scale(1.5);
+    }
+    .hover-transform:hover .hover-transform-mask {
+      background-color: rgba(0, 0, 0, .1);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="hover-transform">
+    <div class="hover-transform-bg"></div>
+    <div class="hover-transform-mask"></div>
+    <div class="hover-transform-ctx">Hover Transform</div>
+  </div>
+</body>
+</html>

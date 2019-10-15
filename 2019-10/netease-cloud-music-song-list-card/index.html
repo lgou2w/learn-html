@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Netease cloud music song list card</title>
+  <style>
+    body { padding: 2rem 0 0 2rem; }
+    .card {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      box-shadow: 6px 6px 6px rgba(0, 0, 0, .26);
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .card .card-bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: url('./img.jpg');
+      background-repeat: no-repeat;
+    }
+    .card .card-play {
+      position: absolute;
+      width: 100%;
+      height: 10%;
+      text-align: right;
+      background-color: rgba(0, 0, 0, .26);
+      color: white;
+      font-size: 0.8rem;
+      font-family: sans-serif;
+      transition: opacity .4s ease-in;
+    }
+    .card .card-label {
+      position: absolute;
+      width: 100%;
+      height: auto;
+      top: -100%;
+      color: white;
+      font-size: 0.8rem;
+      font-family: sans-serif;
+      background-color: rgba(0, 0, 0, .36);
+      transition: top .4s ease-in-out;
+    }
+    .card .card-play span {
+      display: inline-block;
+      margin: 0.1rem 0.2rem;
+    }
+    .card .card-label span {
+      display: inline-block;
+      margin: 0.4rem;
+    }
+
+    .card:hover .card-play {
+      opacity: 0;
+    }
+    .card:hover .card-label {
+      top: 0;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-bg"></div>
+    <div class="card-play"><span>386.5万播放</span></div>
+    <div class="card-label"><span>冰镇软萌音｜不能自已的Kawaii电音</span></div>
+  </div>
+</body>
+</html>

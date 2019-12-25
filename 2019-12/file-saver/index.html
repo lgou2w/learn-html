@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://unpkg.com/vue@2.6.11/dist/vue.js"></script>
+  <script src="https://unpkg.com/file-saver@2.0.2/dist/FileSaver.js"></script>
+  <title>FileSaver</title>
+</head>
+<body>
+  <div id="app">
+    <p>输入需要保存的文本：</p>
+    <textarea v-model="text"></textarea>
+    <br />
+    <br />
+    <input v-model="name"></input>
+    <button @click.stop="save">保存</button>
+  </div>
+  <script>
+    const DEF_NAME = 'FileSaver.txt'
+    const app = new Vue({
+      el: '#app',
+      data: {
+        name: DEF_NAME,
+        text: 'Hello File Saver !'
+      },
+      methods: {
+        save (evt) {
+          if (!this.text) {
+            alert('请输入文本！')
+            return
+          }
+          let lines = this.text.split('\n')
+          let blob = new Blob(lines, { type: 'text/plain; charset=utf-8' })
+          saveAs(blob, this.name || DEF_NAME)
+        }
+      }
+    })
+  </script>
+</body>
+</html>

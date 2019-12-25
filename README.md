@@ -1,2 +1,2 @@
-# learn-vue
-🚧 Learning and playing Vue.js
+# learn-html
+🚧 Learning and playing Html

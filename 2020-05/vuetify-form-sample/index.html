@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdi@2.2.43/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@2.2.27/dist/vuetify.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.2.27/dist/vuetify.min.js"></script>
+  <title>Vuetify Form Sample</title>
+</head>
+<body>
+  <div id="app">
+    <v-app light>
+      <v-content>
+        <v-container>
+          <v-row justify="center">
+            <v-col cols=12 md=5>
+              <v-card>
+                <v-card-title class="primary white--text elevation-1">
+                  <div>账户登录</div>
+                  <v-spacer></v-spacer>
+                  <v-btn icon dark @click.stop="reset">
+                    <v-icon>mdi-refresh</v-icon>
+                  </v-btn>
+                </v-card-title>
+                <v-card-text class="py-4">
+                  <v-form ref="form" lazy-validation>
+                    <v-text-field
+                      v-model="email"
+                      label="* 账户邮箱"
+                      prepend-icon="mdi-email"
+                      type="email"
+                      :rules="emailRules"
+                      clearable
+                      required
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="password"
+                      label="* 账户密码"
+                      prepend-icon="mdi-lock"
+                      :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                      :type="showPassword ? 'text' : 'password'"
+                      @click:append="showPassword = !showPassword"
+                      :rules="passwordRules"
+                      counter
+                    ></v-text-field>
+                  </v-form>
+                </v-card-text>
+                <v-card-actions class="pt-0 mx-2 pb-4">
+                  <v-btn
+                    @click.stop="submit"
+                    :disabled="disabled"
+                    color="primary"
+                    block
+                    >登录</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-content>
+    </v-app>
+  </div>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: () => ({
+        email: '',
+        password: '',
+        showPassword: false,
+        emailRules: [
+          (v) => !!v || '请输入账户邮箱！',
+          (v) => (v && /^.+@.+\..+$/.test(v)) || '请输入有效的账户邮箱！'
+        ],
+        passwordRules: [
+          (v) => !!v || '请输入账户密码！',
+          (v) => (v && v.length >= 6) || '账户密码至少为 6 位！'
+        ]
+      }),
+      computed: {
+        disabled () {
+          return !this.email ||
+            !this.password ||
+            !this.$refs.form ||
+            !this.$refs.form.validate()
+        }
+      },
+      methods: {
+        reset () {
+          this.$refs.form.reset()
+        },
+        submit (evt) {
+          evt.preventDefault()
+          if (!this.$refs.form.validate()) {
+            return
+          }
+          alert('passed!')
+        }
+      }
+    })
+  </script>
+</body>
+</html>

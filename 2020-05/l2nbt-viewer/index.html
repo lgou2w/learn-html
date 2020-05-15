@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdi@2.x/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pako/dist/pako.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/l2nbt@0.x/dist/l2nbt.min.js"></script>
+  <title>l2nbt.js Viewer for Browser</title>
+</head>
+<body> <!-- TODO: NBT Editor, etc... -->
+  <div id="app">
+    <v-app light>
+      <v-app-bar app fixed dark color="primary">
+        <v-toolbar-title>l2nbt.js Viewer for Browser</v-toolbar-title>
+        <v-btn href="https://github.com/lgou2w/l2nbt.js" icon>
+          <i class="v-icon">
+            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+              <path fill="#FFFFFF" d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" />
+            </svg>
+          </i>
+        </v-btn>
+      </v-app-bar>
+      <v-content>
+        <v-container fluid>
+          <v-file-input
+            label="选择文件..."
+            accept=".dat"
+            @change="readFile"
+          ></v-file-input>
+          <v-treeview
+            v-if="nbt"
+            :items="nbtTree"
+            item-key="id"
+            item-text="name"
+            item-children="children"
+            class="elevation-2 py-3"
+          >
+            <template #prepend="{ item }">
+              <v-icon v-if="item.type === NBTTypes.TAG_LIST">
+                mdi-format-list-bulleted
+              </v-icon>
+              <v-icon v-else-if="item.type === NBTTypes.TAG_COMPOUND">
+                mdi-archive
+              </v-icon>
+              <v-icon v-else-if="item.type === NBTTypes.TAG_STRING">
+                mdi-format-color-text
+              </v-icon>
+              <i v-else-if="item.type === NBTTypes.TAG_BYTE_ARRAY ||
+                item.type === NBTTypes.TAG_INT_ARRAY ||
+                item.type === NBTTypes.TAG_LONG_ARRAY">
+                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                  <path fill="#757575" d="M15,4V6H18V18H15V20H20V4M4,4V20H9V18H6V6H9V4H4Z" />
+                </svg>
+              </i>
+              <i v-else>
+                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                  <path fill="none" d="M0 0h24v24H0V0z"/>
+                  <path fill="#757575" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
+                  <text
+                    transform="matrix(1 0 0 1 7.332 19.4375)"
+                    style="fill:#757575;font-size:12px;font-weight:bold;font-style:normal;font-family:'Roboto',sans-serif;"
+                  >{{ computeTagType(item.type) }}</text>
+                </svg>
+              </i>
+            </template>
+          </v-treeview>
+        </v-container>
+      </v-content>
+    </v-app>
+  </div>
+  <script>
+    const NBTTypes = l2nbt.NBTTypes
+    const app = new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+      data: () => ({
+        nbt: l2nbt.tagCompound({
+          id: l2nbt.tagString('minecraft:diamond_sword'),
+          Count: l2nbt.tagByte(1),
+          tag: l2nbt.tagCompound({
+            display: l2nbt.tagCompound({
+              Name: l2nbt.tagString('Diamond Sword'),
+              Lore: l2nbt.tagList([
+                l2nbt.tagString('Lore1'),
+                l2nbt.tagString('Lore2')
+              ])
+            }),
+          }),
+        })
+      }),
+      computed: {
+        nbtTree () {
+          return this.generateTree(this.nbt)
+        }
+      },
+      mounted () {
+      },
+      methods: {
+        generateTree (nbt, pk) {
+          const tree = []
+          for (const key in nbt.__value__) {
+            const id = pk ? pk + '.' + key : key
+            const val = nbt.__value__[key]
+            const type = val.__type__
+            if (type === NBTTypes.TAG_LIST ||
+            type === NBTTypes.TAG_COMPOUND) {
+              tree.push({
+                id,
+                type,
+                name: key + ' :',
+                children: this.generateTree(val, id)
+              })
+            } else if (type === NBTTypes.TAG_BYTE_ARRAY ||
+              type === NBTTypes.TAG_INT_ARRAY ||
+              type === NBTTypes.TAG_LONG_ARRAY) {
+              const values = []
+              for (const el of val.__value__) {
+                values.push({
+                  name: el,
+                  type: type === NBTTypes.TAG_BYTE_ARRAY
+                    ? NBTTypes.TAG_BYTE
+                    : type === NBTTypes.TAG_INT_ARRAY
+                      ? NBTTypes.TAG_INT
+                      : NBTTypes.TAG_LONG
+                })
+              }
+              tree.push({
+                id,
+                type,
+                name: key + ' :',
+                children: values
+              })
+            } else if (nbt.__elementType__) {
+              tree.push({
+                id,
+                type: nbt.__elementType__,
+                name: typeof val === 'string' ? `"${val}"` : val,
+              })
+            } else {
+              const value = val.__type__ === NBTTypes.TAG_STRING
+                ? `"${val.__value__}"`
+                : val.__value__
+              tree.push({
+                id,
+                type,
+                name: key + ' : ' + value
+              })
+            }
+          }
+          return tree
+        },
+        computeTagType (type) {
+          switch (type) {
+            case NBTTypes.TAG_BYTE: return 'B'
+            case NBTTypes.TAG_SHORT: return 'S'
+            case NBTTypes.TAG_INT: return 'I'
+            case NBTTypes.TAG_LONG: return 'L'
+            case NBTTypes.TAG_FLOAT: return 'F'
+            case NBTTypes.TAG_DOUBLE: return 'D'
+            default: return 'U'
+          }
+        },
+        readFile (file) {
+          if (!file) return
+          const _this = this
+          const reader = new FileReader()
+          reader.onload = (e) => {
+            const buf = e.target.result
+            const data = new Uint8Array(buf)
+            _this.nbt = data[0] === 0x1F && data[1] === 0x8B
+              ? l2nbt.read(pako.inflate(data))
+              : l2nbt.read(data)
+          }
+          reader.onerror = (e) => {
+            window.alert(reader.error)
+          }
+          reader.readAsArrayBuffer(file)
+        }
+      }
+    })
+  </script>
+</body>
+</html>
